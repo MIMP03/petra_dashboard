@@ -2,10 +2,7 @@ from providers.mock_provider import MockProvider
 
 
 def create_provider(mode):
-    """Factory: crea el proveedor de datos según el modo pedido.
-    Si se pide 'ros' pero rospy no está disponible, cae a mock avisando
-    por consola en vez de tumbar el servidor entero.
-    """
+
     if mode == "ros":
         try:
             from providers.ros_provider import RosProvider
