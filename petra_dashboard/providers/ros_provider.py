@@ -1,20 +1,19 @@
 """
 Proveedor ROS: se conecta a los tópicos reales del robot.
-
-Requisitos en ESTA máquina (el host):
+Requisitos en la máquina (el host):
   - ROS instalado (o al menos rospy) y variables de entorno apuntando al
     roscore correcto:
         export ROS_MASTER_URI=http://<IP_RASPBERRY>:11311
         export ROS_IP=<IP_DE_ESTA_COMPUTADORA>
-  - Que el roscore esté corriendo en la Raspberry (o donde lo levantes).
+  - Que el roscore esté corriendo en la Raspberry (o donde sse levante)
 
 Este provider NO hace overhead en la Raspberry: solo se suscribe a los
 tópicos que el robot ya publica, y le manda la meta de navegación cuando
 el usuario la pide desde el dashboard. Todo el cómputo del dashboard
-(HTTP, WebSocket, HTML) corre en esta computadora, tal como pediste.
+(HTTP, WebSocket, HTML) corre en esta computadora o el host
 
-Ajusta los nombres de tópicos en config.py -> ROS_CONFIG según lo que
-tenga tu robot real.
+por ultimo se justa los nombres de tópicos en config.py en: ROS_CONFIG según lo que
+tenga el robot
 """
 import threading
 from datetime import datetime
@@ -65,7 +64,7 @@ class RosProvider(BaseProvider):
         self._PoseStamped = PoseStamped
         self._goal_pub = rospy.Publisher(ROS_CONFIG["goal_topic"], PoseStamped, queue_size=1)
 
-        # rospy corre su propio loop; lo hacemos en un hilo para no bloquear Flask
+        # rospy corre su propio loop; lo he hecho en un hilo para no bloquear Flask
         self._spin_thread = threading.Thread(target=rospy.spin, daemon=True)
         self._spin_thread.start()
 
@@ -94,11 +93,11 @@ class RosProvider(BaseProvider):
         return {"ok": True, "message": f"Meta publicada en {ROS_CONFIG['goal_topic']}"}
 
     def get_photos(self):
-        # Si tienes un tópico/servicio de imágenes, aquí es donde se
-        # conectaría para listar fotos capturadas. Placeholder por ahora.
+        # Si finalmente hacemos un tópico/servicio de imágenes, aquí es donde se
+        # conectaría para listar fotos capturadas. placeholder por ahora
         return []
 
-    # ---------- callbacks ROS ----------
+   -
     def _touch(self):
         with self._lock:
             self._latest["timestamp"] = datetime.now().isoformat(timespec="seconds")
