@@ -1,11 +1,6 @@
-// ============================================================
-// Proyecto Petra — Dashboard
-// ============================================================
-
 const mapConfig = window.PETRA_MAP_CONFIG;
 let latestTelemetry = null;
-
-// ---------------- Conexión WebSocket ----------------
+//conexion websoket
 const socket = io();
 
 socket.on("connect", () => setConnStatus(true));
@@ -25,7 +20,7 @@ function setConnStatus(online) {
   label.textContent = online ? "Conectado" : "Sin conexión";
 }
 
-// ---------------- Menú desglosable (sidebar) ----------------
+// menu
 const sidebar = document.getElementById("sidebar");
 const sidebarToggle = document.getElementById("sidebar-toggle");
 sidebarToggle.addEventListener("click", () => {
@@ -39,9 +34,9 @@ document.querySelectorAll(".stat-head").forEach((head) => {
   });
 });
 
-// ---------------- Render de estadísticas ----------------
+// estadisticas
 function renderTelemetry(data) {
-  // Batería
+  // bateria
   const battLevel = data.battery.level;
   document.getElementById("battery-level").textContent =
     battLevel != null ? `${battLevel.toFixed(1)}%` : "--%";
@@ -51,14 +46,14 @@ function renderTelemetry(data) {
     battLevel <= 20 ? "var(--danger)" : battLevel <= 40 ? "var(--warn)" : "var(--accent)";
   document.getElementById("battery-charging").hidden = !data.battery.charging;
 
-  // Cámara
+  // camara
   const camPill = document.getElementById("camera-status");
   const camStatus = data.camera.status;
   camPill.textContent =
     camStatus === "ok" ? "Operativa" : camStatus === "error" ? "No enciende" : "Desconocido";
   camPill.className = "status-pill " + (camStatus === "ok" ? "ok" : camStatus === "error" ? "error" : "");
 
-  // Temperatura
+  // temperatura
   const temp = data.temperature.cpu;
   document.getElementById("temp-value").textContent = temp != null ? `${temp.toFixed(1)} °C` : "-- °C";
   const tempPill = document.getElementById("temp-status");
@@ -66,20 +61,20 @@ function renderTelemetry(data) {
   tempPill.textContent = tempHigh ? "Alta" : "Normal";
   tempPill.className = "status-pill " + (tempHigh ? "warn" : "ok");
 
-  // Autonomía
+  // autonomia
   document.getElementById("autonomy-time").textContent =
     data.autonomy.remaining_minutes != null ? `${data.autonomy.remaining_minutes} min` : "-- min";
   document.getElementById("autonomy-distance").textContent =
     data.autonomy.distance_traveled_m != null ? `${data.autonomy.distance_traveled_m} m` : "-- m";
 
-  // Estado de navegación
+  // estado de navegacion
   const navStatus = document.getElementById("nav-status");
   navStatus.textContent = data.goal
     ? `En camino a (${data.goal.x.toFixed(2)}, ${data.goal.y.toFixed(2)})`
     : "Robot en reposo";
 }
 
-// ---------------- Fotos (opcional) ----------------
+// fotos
 async function loadPhotos() {
   try {
     const res = await fetch("/api/photos");
@@ -104,7 +99,7 @@ async function loadPhotos() {
 }
 loadPhotos();
 
-// ---------------- Mapa (canvas) ----------------
+// mapa simulado, hay que enalzarlo con el slam
 const canvas = document.getElementById("map-canvas");
 const ctx = canvas.getContext("2d");
 
@@ -118,7 +113,6 @@ function resizeCanvas() {
 }
 window.addEventListener("resize", () => { resizeCanvas(); drawMap(); });
 
-// convierte metros -> pixeles del canvas, manteniendo proporción y margen
 function getTransform() {
   const w = canvas.width / devicePixelRatio;
   const h = canvas.height / devicePixelRatio;
@@ -210,7 +204,7 @@ function drawMap() {
   }
 }
 
-// ---------------- Destinos predefinidos (Aula A, Aula B, Aula C...) ----------------
+//  Destinos predefinidos (Aula A, Aula B, Aula C...) 
 const destinationSelect = document.getElementById("destination-select");
 const currentRoomNote = document.getElementById("current-room-note");
 let lastKnownRoom = undefined; // para no recargar el <select> en cada telemetría si no cambió
@@ -268,7 +262,7 @@ document.getElementById("goal-send").addEventListener("click", async () => {
 loadDestinations();
 setInterval(loadDestinations, 3000); // refresca la lista si el robot cambió de sala
 
-// ---------------- Cambio de modo (mock / ros) ----------------
+// cambio de modo (mock / ros)
 const modeSwitch = document.getElementById("mode-switch");
 if (modeSwitch) {
   const btnMock = document.getElementById("btn-mock");
@@ -304,7 +298,7 @@ if (modeSwitch) {
   fetch("/api/mode").then((r) => r.json()).then((d) => setActiveModeButton(d.mode));
 }
 
-// ---------------- Toasts ----------------
+// toast
 function showToast({ type, message }) {
   const stack = document.getElementById("toast-stack");
   const el = document.createElement("div");
@@ -316,6 +310,6 @@ function showToast({ type, message }) {
   setTimeout(() => el.remove(), 6000);
 }
 
-// ---------------- Init ----------------
+// init
 resizeCanvas();
 drawMap();
