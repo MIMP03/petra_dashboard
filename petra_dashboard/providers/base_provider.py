@@ -1,5 +1,5 @@
 """
-Contrato común que debe cumplir cualquier proveedor de datos del robot,
+contrato común que debe cumplir cualquier proveedor de datos del robot,
 sea simulado (mock) o real (ROS). Gracias a esto, app.py y el frontend
 no necesitan saber de dónde vienen los datos.
 """
@@ -39,3 +39,4 @@ class BaseProvider(ABC):
     def get_photos(self):
         """Devuelve una lista de fotos disponibles (opcional, cámara)."""
         raise NotImplementedError
+        #esta es la parte que no se como conectar con el slam
