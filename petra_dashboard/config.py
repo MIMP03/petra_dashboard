@@ -1,10 +1,8 @@
 """
-Configuración central de Proyecto Petra - Dashboard.
-
 MODE controla de dónde vienen los datos:
   - "mock": datos simulados, no requiere ROS ni la Raspberry conectada.
   - "ros":  datos reales, se conecta a ROS (roscore corriendo en la Raspberry
-            o en esta misma máquina, según tu ROS_MASTER_URI).
+            o en esta misma máquina, según ROS_MASTER_URI).
 
 Puedes cambiar el modo de 3 formas (en orden de prioridad):
   1. Variable de entorno:  PETRA_MODE=ros python app.py
@@ -17,11 +15,9 @@ import os
 # "mock" o "ros"
 MODE = os.environ.get("PETRA_MODE", "mock")
 
-# Si True, el dashboard muestra un switch para alternar entre mock/ros
-# sin reiniciar el servidor (útil mientras desarrollas).
 ALLOW_RUNTIME_SWITCH = True
 
-# --- Configuración de ROS (solo se usa si MODE == "ros") ---
+# onfiguración de ROS (solo se usa si MODE == "ros")
 ROS_CONFIG = {
     # Tópicos que publica el robot (ajusta a los nombres reales que uses)
     "battery_topic": "/battery_state",       # sensor_msgs/BatteryState
@@ -33,10 +29,11 @@ ROS_CONFIG = {
     "map_frame": "map",
 }
 
-# --- Mapa de referencia mientras no exista el mapa SLAM real ---
+#todos esos cambios los haran dependiendo los sensores que puedan agregar, todavia no se cuales son.
+#  Mapa de referencia mientras no este el mapa SLAM real
 # Rectángulo de trabajo en metros (ancho x alto). El robot se mueve
-# dentro de este rango. Cuando tengas el mapa SLAM real, esto se
-# reemplaza por la imagen/occupancy-grid real (ver README).
+# dentro de este rango. Cuando se tenga el mapa SLAM real, esto se
+# reemplaza por la imagen/occupancy-grid real 
 #
 # "rooms" son a la vez los lugares visibles en el mapa Y los destinos
 # que aparecen en el menú de navegación. El robot navega al centro
