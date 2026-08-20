@@ -1,6 +1,6 @@
 """
 Proyecto Petra - Dashboard
-Servidor host (corre en esta computadora, NO en la Raspberry).
+Servidor host (corre en una computadora, NO en la Raspberry).
 
 Arrancar:
     python app.py                    # modo definido en config.py (mock por defecto)
