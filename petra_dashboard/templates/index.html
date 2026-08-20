@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Petra · Panel de control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">◎</span>
+    <div class="brand-text">
+      <h1>PETRA</h1>
+      <span class="brand-sub">Robot autónomo · SLAM</span>
+    </div>
+  </div>
+
+  <div class="topbar-right">
+    <div class="conn-status" id="conn-status">
+      <span class="dot" id="conn-dot"></span>
+      <span id="conn-label">Conectando…</span>
+    </div>
+    {% if allow_switch %}
+    <div class="mode-switch" id="mode-switch" title="Fuente de datos">
+      <button class="mode-btn" data-mode="mock" id="btn-mock">SIMULADO</button>
+      <button class="mode-btn" data-mode="ros" id="btn-ros">ROS</button>
+    </div>
+    {% endif %}
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- MENU DESGLOSABLE -->
+  <aside class="sidebar" id="sidebar">
+    <button class="sidebar-toggle" id="sidebar-toggle" aria-expanded="true">
+      <span>Estadísticas</span>
+      <span class="chevron">▾</span>
+    </button>
+
+    <div class="sidebar-body" id="sidebar-body">
+
+      <section class="stat-block" data-key="battery">
+        <button class="stat-head">
+          <span class="stat-icon">⚡</span>
+          <span class="stat-title">Batería</span>
+          <span class="chevron small">▾</span>
+        </button>
+        <div class="stat-content">
+          <div class="battery-gauge">
+            <div class="battery-fill" id="battery-fill"></div>
+          </div>
+          <div class="stat-row">
+            <span class="stat-value" id="battery-level">--%</span>
+            <span class="stat-tag" id="battery-charging" hidden>Cargando</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="stat-block" data-key="camera">
+        <button class="stat-head">
+          <span class="stat-icon">▣</span>
+          <span class="stat-title">Cámara</span>
+          <span class="chevron small">▾</span>
+        </button>
+        <div class="stat-content">
+          <div class="stat-row">
+            <span class="status-pill" id="camera-status">--</span>
+          </div>
+          <p class="stat-hint">Uso opcional del robot</p>
+        </div>
+      </section>
+
+      <section class="stat-block" data-key="temperature">
+        <button class="stat-head">
+          <span class="stat-icon">◈</span>
+          <span class="stat-title">Temperatura</span>
+          <span class="chevron small">▾</span>
+        </button>
+        <div class="stat-content">
+          <div class="stat-row">
+            <span class="stat-value" id="temp-value">-- °C</span>
+            <span class="status-pill" id="temp-status">--</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="stat-block" data-key="autonomy">
+        <button class="stat-head">
+          <span class="stat-icon">◷</span>
+          <span class="stat-title">Autonomía</span>
+          <span class="chevron small">▾</span>
+        </button>
+        <div class="stat-content">
+          <div class="stat-row">
+            <span class="stat-label">Tiempo restante</span>
+            <span class="stat-value" id="autonomy-time">-- min</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Distancia recorrida</span>
+            <span class="stat-value" id="autonomy-distance">-- m</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="stat-block" data-key="photos">
+        <button class="stat-head">
+          <span class="stat-icon">🖼</span>
+          <span class="stat-title">Fotos <em>(opcional)</em></span>
+          <span class="chevron small">▾</span>
+        </button>
+        <div class="stat-content">
+          <div class="photo-grid" id="photo-grid">
+            <p class="stat-hint" id="photo-empty">Sin fotos disponibles todavía.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </aside>
+
+  <!-- MAPA -->
+  <main class="map-area">
+    <div class="map-toolbar">
+      <div class="map-toolbar-left">
+        <span class="map-title">Ubicación en tiempo real</span>
+        <span class="map-note" id="current-room-note">Sala actual: --</span>
+      </div>
+      <div class="goal-panel">
+        <select id="destination-select">
+          <option value="">Elegir destino…</option>
+        </select>
+        <button id="goal-send" class="btn-primary">Enviar robot</button>
+      </div>
+    </div>
+
+    <div class="map-canvas-wrap">
+      <canvas id="map-canvas"></canvas>
+    </div>
+
+    <div class="map-footer">
+      <span id="nav-status">Robot en reposo</span>
+    </div>
+  </main>
+
+</div>
+
+<div class="toast-stack" id="toast-stack"></div>
+
+<script>
+  window.PETRA_MAP_CONFIG = {{ map_config | tojson }};
+  window.PETRA_CURRENT_MODE = {{ current_mode | tojson }};
+</script>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>
